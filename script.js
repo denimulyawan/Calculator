@@ -1,49 +1,69 @@
-let Input = '', display = document.getElementById('display');
+// Mendapatkan elemen tampilan kalkulator
+const display = document.getElementById("display");
 
-function clearDisplay() { Input = ''; display.value = ''; }
-
-function displayResult(value) { if (Math.abs(value) < 1e-14) value = 0; display.value = value; Input = value.toString(); }
-
-function calculateResult() { try { displayResult(eval(Input)); } catch (error) { display.value = 'ERROR'; } }
-
-function appendToDisplay(value) {
-  value = value.replace(new RegExp('o_b', 'g'), '(');
-  value = value.replace(new RegExp('c_b', 'g'), ')');
-  calculate(value);
-  value = value.replace(new RegExp('sin', 'g'), 'sin(');
-  value = value.replace(new RegExp('cos', 'g'), 'cos(');
-  value = value.replace(new RegExp('tan', 'g'), 'tan(');
-  value = value.replace(new RegExp('sih', 'g'), 'sinh(');
-  value = value.replace(new RegExp('coh', 'g'), 'cosh(');
-  value = value.replace(new RegExp('tah', 'g'), 'tanh(');
-  value = value.replace(new RegExp('ln', 'g'), 'ln(');
-  value = value.replace(new RegExp('log10', 'g'), 'log10(');
-  value = value.replace(new RegExp('sqrt', 'g'), 'sqrt(');
-  value = value.replace(new RegExp('cbrt', 'g'), 'cbrt(');
-  value = value.replace(new RegExp('abs', 'g'), 'abs(');
-
-  display.value += value;
+// Menambahkan angka atau operator ke tampilan kalkulator
+function addNumber(value) {
+    display.value += value;
 }
 
-function calculate(value) {
-  value = value.replace(/\^/g, '**');
-  value = value.replace(new RegExp('e', 'g'), 'Math.E');
-  value = value.replace(new RegExp('π', 'g'), 'Math.PI');
-  value = value.replace(new RegExp('sin', 'g'), 'Math.sin(Math.PI / 180 * ');
-  value = value.replace(new RegExp('cos', 'g'), 'Math.cos(Math.PI / 180 * ');
-  value = value.replace(new RegExp('tan', 'g'), 'Math.tan(Math.PI / 180 * ');
-  value = value.replace(new RegExp('sih', 'g'), 'Math.sin(Math.PI / 180 * ');
-  value = value.replace(new RegExp('coh', 'g'), 'Math.cos(Math.PI / 180 * ');
-  value = value.replace(new RegExp('tah', 'g'), 'Math.tan(Math.PI / 180 * ');
-  value = value.replace(new RegExp('ln', 'g'), 'Math.log( ');
-  value = value.replace(new RegExp('log10', 'g'), 'Math.log10( ');
-  value = value.replace(new RegExp('sqrt', 'g'), 'Math.sqrt( ');
-  value = value.replace(new RegExp('cbrt', 'g'), 'Math.cbrt( ');
-  value = value.replace(new RegExp('abs', 'g'), 'Math.abs(');
-
-  Input += value;
+// Menghapus tampilan kalkulator
+function clearDisplay() {
+    display.value = '';
 }
-function Factorial() { Input = factorial(Input); display.value = Input; }
-function factorial(n) { return n == 0 || n == 1 ? 1 : n * factorial(n - 1); }
 
-function Rand() { Input = parseInt(Math.random() * 1000); display.value = Input; }
+// Menghapus karakter terakhir di tampilan kalkulator
+function deleteLast() {
+    display.value = display.value.slice(0, -1);
+}
+
+// Menghitung hasil ekspresi matematika
+function calculateResult() {
+    try {
+        // Mengganti simbol untuk kompatibilitas dengan eval
+        let expression = display.value;
+        expression = expression.replace(/x/g, '*').replace(/÷/g, '/');
+        display.value = eval(expression);
+    } catch (error) {
+        display.value = 'Error';
+    }
+}
+
+// Fungsi untuk menghitung akar kuadrat
+function calculateSquareRoot() {
+    const value = parseFloat(display.value);
+    if (!isNaN(value)) {
+        display.value = Math.sqrt(value);
+    } else {
+        display.value = 'Error';
+    }
+}
+
+// Fungsi untuk menghitung persentase
+function calculatePercentage() {
+    const value = parseFloat(display.value);
+    if (!isNaN(value)) {
+        display.value = value / 100;
+    } else {
+        display.value = 'Error';
+    }
+}
+
+// Menangani input keyboard
+document.addEventListener('keydown', function(event) {
+    const key = event.key;
+
+    // Memeriksa apakah yang ditekan adalah angka atau operator yang valid
+    if (/[0-9+\-*/.÷x]/.test(key)) {
+        addNumber(key);
+    }
+
+    // Memeriksa jika tombol Enter ditekan untuk menghitung hasil
+    if (key === 'Enter') {
+        calculateResult();
+    }
+
+    // Memeriksa jika tombol Backspace ditekan untuk menghapus karakter terakhir
+    if (key === 'Backspace') {
+        deleteLast();
+    }
+});
