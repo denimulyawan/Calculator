@@ -3,7 +3,12 @@ const display = document.getElementById("display");
 
 // Menambahkan angka atau operator ke tampilan kalkulator
 function addNumber(value) {
-    display.value += value;
+    // Jika nilai yang dimasukkan adalah '*' (tombol x), ganti dengan 'x'
+    if (value === '*') {
+        display.value += 'x';
+    } else {
+        display.value += value;
+    }
 }
 
 // Menghapus tampilan kalkulator
@@ -19,12 +24,12 @@ function deleteLast() {
 // Menghitung hasil ekspresi matematika
 function calculateResult() {
     try {
-        // Mengganti simbol untuk kompatibilitas dengan eval
+        // Sebelum evaluasi, ganti 'x' dengan '*' untuk operasi perkalian di JavaScript
         let expression = display.value;
         expression = expression.replace(/x/g, '*').replace(/÷/g, '/');
-        display.value = eval(expression);
+        display.value = eval(expression); // Evaluasi ekspresi dan tampilkan hasilnya
     } catch (error) {
-        display.value = 'Error';
+        display.value = 'Error'; // Menampilkan pesan error jika ada masalah
     }
 }
 
@@ -57,7 +62,7 @@ document.addEventListener('keydown', function(event) {
         addNumber(key);
     }
 
-    // Memeriksa jika tombol Enter ditekan untuk menghitung hasil
+    // Memeriksa jika tombol Enter ditekan untuk menghitung hasil (sama seperti tombol =)
     if (key === 'Enter') {
         calculateResult();
     }
